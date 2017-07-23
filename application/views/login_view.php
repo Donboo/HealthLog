@@ -139,28 +139,26 @@
           dialog.close();
         });
         
-        $(document).ready(function(){
-            $('#stepCodevo').on('submit', function(e) {
-                e.preventDefault();       
-                var password = $('#stepPassword').val();
-                var data = {
-                    'passwordeanu' : password,   
-                    '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url()?>Login/stepPassword/",
-                    dataType: "json",
-                    data: data,                  
-                    success: function(data){
-                        if(data.valid){
-                            window.location = "<?php echo base_url(); ?>";
-                        }else{
-                            $(".mdl-textfield__error").css("visibility", "visible");
-                            $(".mdl-textfield__error").html(data.errorMessage);
-                        }
+        $('#stepCodevo').on('submit', function(e) {
+            e.preventDefault();       
+            var password = $('#stepPassword').val();
+            var data = {
+                'passwordeanu' : password,   
+                '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
+            };
+            $.ajax({
+                type: "POST",
+                url: "<?php echo base_url()?>Login/stepPassword/",
+                dataType: "json",
+                data: data,                  
+                success: function(data){
+                    if(data.valid){
+                        window.location = "<?php echo base_url(); ?>";
+                    }else{
+                        $(".mdl-textfield__error").css("visibility", "visible");
+                        $(".mdl-textfield__error").html(data.errorMessage);
                     }
-                });
+                }
             });
         });
     </script>

@@ -146,7 +146,17 @@ class Medic extends CI_Controller {
         }
     }
     
-    function SearchCard() {
+    function searchUser() {
+        $code = $this->input->post('codCard');
+        if($this->user->codeExists($code)) {
+            $query = $this->db->query("SELECT Name, BirthYear, Location FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.users") . " WHERE CardCode = ? LIMIT 1", array($code));
+            $eok = explode(',', $query->result()[0]->Location);
+            echo json_encode(array("valid" => 1, "name" => $query->result()[0]->Name, "byear" => $query->result()[0]->BirthYear, "where" => $eok["1"].", ".$eok["2"]));
+        }      
+        else echo json_encode(array("valid" => 0));
+    }
+    
+   /* function SearchCard() {
         $code = $this->input->post('codCard');
         if(!is_numeric($code)) {
             $this->session->set_flashdata("error", "Pacient inexistent.");
@@ -161,5 +171,5 @@ class Medic extends CI_Controller {
             $this->session->set_flashdata("error", "Pacient inexistent.");
             redirect(base_url("Medic"));
         }
-    }
+    }*/
 }

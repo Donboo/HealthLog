@@ -156,20 +156,4 @@ class Medic extends CI_Controller {
         else echo json_encode(array("valid" => 0));
     }
     
-   /* function SearchCard() {
-        $code = $this->input->post('codCard');
-        if(!is_numeric($code)) {
-            $this->session->set_flashdata("error", "Pacient inexistent.");
-            redirect(base_url("Medic"));
-        }
-        
-        $exists = $this->user->codeExists($code);
-        if($exists) {
-            redirect(base_url("Pacient/" . $code));   
-        }
-        else {
-            $this->session->set_flashdata("error", "Pacient inexistent.");
-            redirect(base_url("Medic"));
-        }
-    }*/
 }

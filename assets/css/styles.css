@@ -430,3 +430,15 @@ _:-ms-input-placeholder, :root .demo-graph {
     text-align: left;
     }
 }
+
+@media screen and (max-width: 1373px) {
+    #secondul {
+        right: calc(100% - 95%) !important;
+    }
+}
+
+@media screen and (min-width: 1300px) and (max-width: 1800px) {
+    #secondul {
+        right: calc(100% - 96%) !important;
+    }
+}

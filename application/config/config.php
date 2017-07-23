@@ -447,7 +447,8 @@ $config['csrf_exclude_uris'] = array(
     "VerifyLogin/stepCode",
     "VerifyLogin/stepPassword",
     "Login/stepCode",
-    "Login/stepPassword"
+    "Login/stepPassword",
+    "Medic/searchUser"
 );
 
 /*

@@ -9,14 +9,14 @@ if((session('loggedInfo', 'CardCode') != $patient) && session('loggedInfo', 'Acc
     $this->session->set_flashdata('error', 'Nu ai permisiunea de a vedea informatiile altor pacienti.');
     redirect(base_url());
 }
+
 ?>
     <div class="mdl-grid f028HL">
         
         <?php
-            $query = $this->db->query("SELECT Date FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.analyzes") . " WHERE Active = 1 AND `ReservedBy` = ? LIMIT 1", array($patient));
-            if($query->num_rows()): ?>
+            if($this->analize_model->selectorWhereActive($patient, "Date")): ?>
         <div class="mdl-components__warning" style="margin-top: 2%;background-color:#E45D5D;">
-                <?php echo translate("Ai o programare activa pe data de " . $query->result()[0]->Date, "You have an active schedule for " . $query->result()[0]->Date); ?>     
+                <?php echo translate("Ai o programare activa pe data de " . $this->analize_model->selectorWhereActive($patient, "Date"), "You have an active schedule for " . $this->analize_model->selectorWhereActive($patient, "Date")); ?>     
         </div>
         <?php endif; ?>
         <div class="demo-card-square mdl-card mdl-shadow--2dp mdl-cell--8-col mdl-grid-8">
@@ -67,7 +67,9 @@ if((session('loggedInfo', 'CardCode') != $patient) && session('loggedInfo', 'Acc
                         data: data,                  
                         success: function(data){
                             if(data.valid){
-                                window.location = "<?php echo base_url(); ?>/analize/<?php echo $patient; ?>";
+                                if(data.valid != 2)
+                                    window.location = "<?php echo base_url(); ?>/analize/<?php echo $patient; ?>";
+                                else alert("Programare invalida. Te rugam sa faci programarea pe o data ce va urma.");
                             }else{
                                 alert("Ai deja o programare activa.");
                             }

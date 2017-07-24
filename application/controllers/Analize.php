@@ -7,6 +7,7 @@ class Analize extends CI_Controller {
     public function __construct() 
     {       
         parent:: __construct();
+        $this->load->model('analize_model','',TRUE);
         if (!is_cache_valid(md5('analize'), 1800)){
             $this->db->cache_delete('analize');
             $this->db->cache_delete(md5('analize'));
@@ -14,9 +15,19 @@ class Analize extends CI_Controller {
     }
     
     public function index() {
-        $data["main_content"] = 'analize_view';
         if($this->session->userdata('loggedInfo')["CardCode"] == null) redirect(base_url("login"));
         $session_data = $this->session->userdata('loggedInfo');
+
+        
+        if($this->analize_model->checkActive(session('loggedInfo', 'CardCode'))):
+            $date = explode('-', $this->analize_model->selectorWhereActive(session('loggedInfo', 'CardCode'), "Date"));
+            if($date[2] < date("d") && $date[1] >= date("m") && $date[0] >= date("Y")):
+                $this->analize_model->expireSchedule(session('loggedInfo', 'CardCode'));
+            endif;
+        endif;
+        
+        $data["main_content"] = 'analize_view';
+        
         $this->load->view('includes/template.php', $data);
         $this->load->helper(array('url', 'cache_expire'));
     }
@@ -37,11 +48,11 @@ class Analize extends CI_Controller {
         $date = $this->input->post('date');
         $contents = explode("-", $date);
         if(count($contents) == 3) {
-            $query = $this->db->query("SELECT null FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.analyzes") . " WHERE `ReservedBy` = ? AND `Active` = 1 LIMIT 1", array(session('loggedInfo', 'CardCode')));
-            
-            if(!$query->num_rows()) {
-                $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.analyzes") . " (`ReservedBy`, `Date`, `Active`) VALUES (?, ?, 1)", array(session('loggedInfo', 'CardCode'), $date));
-                echo json_encode(array("valid" => 1));
+
+            if(!($this->analize_model->checkActive(session('loggedInfo', 'CardCode')))) {
+                if($this->analize_model->insertAnalize(session('loggedInfo', 'CardCode'), $date))
+                    echo json_encode(array("valid" => 1));
+                else echo json_encode(array("valid" => 2));
             }
             else echo json_encode(array("valid" => 0));
         }

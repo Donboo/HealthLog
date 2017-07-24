@@ -32,19 +32,5 @@ class Internari extends CI_Controller {
             $this->index($method,$args);
         }
     }
-    
-    function setAnalize() {
-        $date = $this->input->post('date');
-        $contents = explode("-", $date);
-        if(count($contents) == 3) {
-            $query = $this->db->query("SELECT null FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.analyzes") . " WHERE `ReservedBy` = ? AND `Active` = 1 LIMIT 1", array(session('loggedInfo', 'CardCode')));
-            
-            if(!$query->num_rows()) {
-                $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.analyzes") . " (`ReservedBy`, `Date`, `Active`) VALUES (?, ?, 1)", array(session('loggedInfo', 'CardCode'), $date));
-                echo json_encode(array("valid" => 1));
-            }
-            else echo json_encode(array("valid" => 0));
-        }
-    }
 
 }

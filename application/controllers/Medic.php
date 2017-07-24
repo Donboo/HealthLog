@@ -12,6 +12,7 @@ class Medic extends CI_Controller {
             $this->db->cache_delete(md5('medic'));
         }
         $this->load->model('user','',TRUE);
+        $this->load->model('medic_model','',TRUE);
     }
     
     public function index() {
@@ -41,10 +42,9 @@ class Medic extends CI_Controller {
             redirect(base_url("Medic"));
         }
         
-        $exists = $this->user->codeExists($cardCode);
-        if($exists) {
+        if($this->user->codeExists($cardCode)) {
             $contents = $this->input->post("ckeditor");
-            $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.notes") . " (`CardCode`, `ByDoctor`, `Notes`, `Date`) VALUES (?, ?, ?, ?)", array($cardCode, session("loggedInfo", "CardCode"), $contents, time()));
+            $this->medic_model->insertNote($cardCode, session("loggedInfo", "CardCode"), $contents);
             $this->session->set_flashdata("success", "Ai inserat o observatie medicala pacientului " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
             redirect(base_url("Medic"));
         }
@@ -61,10 +61,9 @@ class Medic extends CI_Controller {
             redirect(base_url("Medic"));
         }
         
-        $exists = $this->user->codeExists($cardCode);
-        if($exists) {
+        if($this->user->codeExists($cardCode)) {
             $contents = $this->input->post("recomandari");
-            $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.recomandations") . " (`CardCode`, `DoctorCode`, `Recomandation`, `Date`) VALUES (?, ?, ?, ?)", array($cardCode, session("loggedInfo", "CardCode"), $contents, time()));
+            $this->medic_model->insertRecomandation($cardCode, session("loggedInfo", "CardCode"), $contents);
             $this->session->set_flashdata("success", "Ai inserat o recomandare pacientului " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
             redirect(base_url("Medic"));
         }
@@ -80,11 +79,10 @@ class Medic extends CI_Controller {
             $this->session->set_flashdata("error", "Pacient inexistent.");
             redirect(base_url("Medic"));
         }
-        
-        $exists = $this->user->codeExists($cardCode);
-        if($exists) {
+    
+        if($this->user->codeExists($cardCode)) {
             $contents = $this->input->post("medicatii");
-            $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.medicatii") . " (`CardCode`, `DoctorCode`, `Product`, `Date`) VALUES (?, ?, ?, ?)", array($cardCode, session("loggedInfo", "CardCode"), $contents, time()));
+            $this->medic_model->insertMedication($cardCode, session("loggedInfo", "CardCode"), $contents);
             $this->session->set_flashdata("success", "Ai inserat o medicatie pacientului " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
             redirect(base_url("Medic"));
         }
@@ -101,10 +99,9 @@ class Medic extends CI_Controller {
             redirect(base_url("Medic"));
         }
         
-        $exists = $this->user->codeExists($cardCode);
-        if($exists) {
+        if($this->user->codeExists($cardCode)) {
             $contents = $this->input->post("diagnosis");
-            $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.diagnostics") . " (`CardCode`, `DoctorCode`, `Diagnostic`, `Hospital`, `Date`) VALUES (?, ?, ?, 1, ?)", array($cardCode, session("loggedInfo", "CardCode"), $contents, time()));
+            $this->medic_model->insertDiagnosis($cardCode, session("loggedInfo", "CardCode"), $contents);
             $this->session->set_flashdata("success", "Ai inserat un diagnostic pacientului " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
             redirect(base_url("Medic"));
         }
@@ -137,7 +134,7 @@ class Medic extends CI_Controller {
             {
                 $upload_data = $this->upload->data();
                 $fileName = $upload_data['file_name'];
-                $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.healthguide") . " (`TitleRO`, `TitleEN`, `Content`, `ContentEN`, `Date`, `Photo`) VALUES (?, ?, ?, ?, ?, ?)", array($titleRO, $titleEN, $contentsRO, $contentsEN, time(), $fileName));
+                $this->medic_model->insertArticle($titleRO, $titleEN, $contentsRO, $contentsEN, $fileName);
                 $this->session->set_flashdata("success", "Ai publicat un articol HealthGuide.");
                 $this->db->cache_delete('default');
                 $this->db->cache_delete(md5('default'));
@@ -148,10 +145,9 @@ class Medic extends CI_Controller {
     
     function searchUser() {
         $code = $this->input->post('codCard');
-        if($this->user->codeExists($code)) {
-            $query = $this->db->query("SELECT Name, BirthYear, Location FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.users") . " WHERE CardCode = ? LIMIT 1", array($code));
-            $eok = explode(',', $query->result()[0]->Location);
-            echo json_encode(array("valid" => 1, "name" => $query->result()[0]->Name, "byear" => $query->result()[0]->BirthYear, "where" => $eok["1"].", ".$eok["2"]));
+        if($this->user->codeExists($code)) {   
+            $eok = explode(',', $this->medic_model->searchUser($code, "Location"));
+            echo json_encode(array("valid" => 1, "name" => $this->medic_model->searchUser($code, "Name"), "byear" => $this->medic_model->searchUser($code, "BirthYear"), "where" => $eok["1"].", ".$eok["2"]));
         }      
         else echo json_encode(array("valid" => 0));
     }

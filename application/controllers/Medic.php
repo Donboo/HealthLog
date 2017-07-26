@@ -54,6 +54,44 @@ class Medic extends CI_Controller {
         }
     }
     
+    function StopHospitalization() {
+        $cardCode = $this->input->post("cardCodePatient");
+        if(!is_numeric($cardCode)) {
+            $this->session->set_flashdata("error", "Pacient inexistent.");
+            redirect(base_url("Medic"));
+        }
+        
+        if($this->user->codeExists($cardCode)) {
+            $id = $this->input->post("rowID");
+            $this->medic_model->stopHospitalization($cardCode, $id);
+            $this->session->set_flashdata("success", "Ai externat pacientul " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
+            redirect(base_url("Medic"));
+        }
+        else {
+            $this->session->set_flashdata("error", "Pacient inexistent.");
+            redirect(base_url("Medic"));
+        }
+    }
+    
+    function InsertHospitalization() {
+        $cardCode = $this->input->post("cardCodePatient");
+        if(!is_numeric($cardCode)) {
+            $this->session->set_flashdata("error", "Pacient inexistent.");
+            redirect(base_url("Medic"));
+        }
+        
+        if($this->user->codeExists($cardCode)) {
+            $contents = $this->input->post("internari");
+            $this->medic_model->insertHospitalization($cardCode, session("loggedInfo", "CardCode"), $contents);
+            $this->session->set_flashdata("success", "Ai inserat o internare pacientului " . get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $cardCode) . " (" . $cardCode . ")");
+            redirect(base_url("Medic"));
+        }
+        else {
+            $this->session->set_flashdata("error", "Pacient inexistent.");
+            redirect(base_url("Medic"));
+        }
+    }
+    
     function InsertRecomandation() {
         $cardCode = $this->input->post("cardCodePatient");
         if(!is_numeric($cardCode)) {

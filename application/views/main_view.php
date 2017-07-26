@@ -1,5 +1,5 @@
     <div class="mdl-grid f028HL">
-        <ul style="position:fixed;">
+        <ul id="firstUL" style="position:fixed;">
             <div class="demo-card-square mdl-card mdl-shadow--2dp">
                 <div class="mdl-card__title mdl-card--expand" style="background:#4CAF50;">
                     <h2 class="mdl-card__title-text"><?php echo translate("Istoric internări", "Hospitalizations historic"); ?><i class="material-icons" style="opacity: 0.3;font-size: 380%;position: absolute;top: -6px;left: 226px;">local_hospital</i></h2>
@@ -11,6 +11,9 @@
                     <a href="<?php echo base_url("internari/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("INTERNĂRI", "HOSPITALIZATIONS"); ?>
                     </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="internari">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
+                    </a>
                 </div>
             </div>
             <br>
@@ -19,11 +22,14 @@
                     <h2 class="mdl-card__title-text"><?php echo translate("Medicații", "Medications"); ?><i class="material-icons" style="opacity: 0.3;font-size: 380%;position: absolute;top: -6px;left: 226px;">colorize</i></h2>
                 </div>
                 <div class="mdl-card__supporting-text">
-                    <?php echo translate("Pentru a-ți vedea medicațiile, apasă pe butonul de mai jos.", "In order to view your medications, click on the button above."); ?>
+                    <?php echo translate("Pentru a-ți vedea medicațiile, apasă pe butonul de mai jos.", "In order to view your medications, click on the button below."); ?>
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
                     <a href="<?php echo base_url("medicatii/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("MEDICAȚII", "MEDICATIONS"); ?>
+                    </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="medicatii">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
                     </a>
                 </div>
             </div>
@@ -38,6 +44,9 @@
                 <div class="mdl-card__actions mdl-card--border">
                     <a href="<?php echo base_url("recomandari/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("RECOMANDĂRI", "RECOMANDATIONS"); ?>
+                    </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="recomandari">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
                     </a>
                 </div>
             </div>
@@ -119,11 +128,14 @@
                     <h2 class="mdl-card__title-text"><?php echo translate("Analize", "Analysis"); ?><i class="material-icons" style="opacity: 0.3;font-size: 380%;position: absolute;top: -6px;left: 226px;">favorite</i></h2>
                 </div>
                 <div class="mdl-card__supporting-text">
-                    <?php echo translate("Ultimul tău set de analize a fost efectuat pe data de " . get_info("Date", "web_analyzes", "ReservedBy", session("loggedInfo", "CardCode"), "ORDER BY ID Desc") . ". Apasă pe butonul de mai jos pentru a te programa pentru un set nou de analize. <a href='http://www.gandul.info/magazin/de-ce-e-bine-sa-iti-faci-analize-la-fiecare-inceput-de-an-7858420'>De ce este bine să îți faci un set de analize?</a>", "Your last analysis set was made on " . get_info("Date", "web_analyzes", "ReservedBy", session("loggedInfo", "CardCode"), "ORDER BY ID Desc") . ". Click on the button below to sign for a new health analysis set.<a href='#'>Why it is good to make a new analysis set?</a>"); ?>
+                    <?php echo translate("Ultimul tău set de analize a fost efectuat pe data de " . get_info("Date", "web_analyzes", "ReservedBy", session("loggedInfo", "CardCode"), "ORDER BY ID Desc") . ". Apasă pe butonul de mai jos pentru a te programa pentru un set nou de analize.", "Your last analysis set was made on " . get_info("Date", "web_analyzes", "ReservedBy", session("loggedInfo", "CardCode"), "ORDER BY ID Desc") . ". Click on the button below to sign for a new health analysis set."); ?>
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
                     <a href="<?php echo base_url("analize/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("FĂ UN SET NOU DE ANALIZE", "CREATE A NEW ANALYSIS SET"); ?>
+                    </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="analize">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
                     </a>
                 </div>
             </div>
@@ -139,6 +151,9 @@
                     <a href="<?php echo base_url("observatii/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("OBSERVAȚII MEDICALE", "MEDICAL NOTES"); ?>
                     </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="observatii">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
+                    </a>
                 </div>
             </div>
             <br>
@@ -153,8 +168,24 @@
                     <a href="<?php echo base_url("diagnostice/" . session("loggedInfo", "CardCode")); ?>" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                         <?php echo translate("DIAGNOSTICE RECENTE", "RECENT DIAGNOSIS"); ?>
                     </a>
+                    <a class="audioTTS" href="javascript:void(0)" data-option="diagnostice">
+                        <img src="<?php echo base_url("assets/images/site/audio.png"); ?>" alt="<?php echo translate("Apasa aici pentru a auzi", "Click here in order to hear"); ?>" style="width: 17px;float: right;margin-right: 10px;margin-top: 9px;">
+                    </a>
                 </div>
             </div>
         </ul>
     </div>
+    <script>
+    $('.audioTTS').each(function () {
+        var $this = $(this);
+        $this.on("click", function () {
+            $('audio').each(function(){
+                this.pause();
+                this.currentTime = 0; 
+                $('audio').remove();
+            });
+            $('.audioTTS').append('<audio autoplay><source src="<?php echo base_url("assets/sounds/"); ?>' + $(this).data('option') + '<?php echo translate(".wav", "_en.mp3"); ?>"></audio>');
+        });
+    });
+    </script>
     <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>

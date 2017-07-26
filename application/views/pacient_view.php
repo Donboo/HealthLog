@@ -128,13 +128,15 @@ if((session('loggedInfo', 'CardCode') != $patient) && session('loggedInfo', 'Acc
                   <thead>
                     <tr>
                       <th class="mdl-data-table__cell--non-numeric">Spital</th>
+                      <th class="mdl-data-table__cell--non-numeric">Doctor</th>   
                       <th class="mdl-data-table__cell--non-numeric">Perioada</th>
                       <th class="mdl-data-table__cell--non-numeric">Cauza</th>
+                      <th class="mdl-data-table__cell--non-numeric">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php
-                        $query = $this->db->query("SELECT `Hospital`, `StartDate`, `StopDate`, `Reason` FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.hospitalizations") . " WHERE `CardCode` = ?", array($patient));
+                        $query = $this->db->query("SELECT `ID`, `Hospital`, `DoctorCode`, `StartDate`, `StopDate`, `Reason` FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.hospitalizations") . " WHERE `CardCode` = ?", array($patient));
                       
                         if(!$query->num_rows()) echo "<td class='mdl-data-table__cell--non-numeric' colspan=3>Internari inexistente.</td>";
                       
@@ -142,8 +144,54 @@ if((session('loggedInfo', 'CardCode') != $patient) && session('loggedInfo', 'Acc
                         { ?>
                          <tr>
                              <td class="mdl-data-table__cell--non-numeric"><?= getHospitalByCounty($row->Hospital); ?></td>
+                             <td class="mdl-data-table__cell--non-numeric"><?= get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $row->DoctorCode); ?></td>
                              <td class="mdl-data-table__cell--non-numeric"><?= convertTimestampToDate($row->StartDate); ?> - <?= convertTimestampToDate($row->StartDate); ?></td>
                              <td class="mdl-data-table__cell--non-numeric"><?= $row->Reason; ?></td>
+                             <?php if($row->StartDate == $row->StopDate) { ?>
+                             <td class="mdl-data-table__cell--non-numeric">
+                                <?php echo form_open("Medic/StopHospitalization"); ?>
+                                <input class="mdl-textfield__input" type="hidden" value="<?php echo $patient; ?>" name="cardCodePatient" id="cardCodePatient">
+                                <input class="mdl-textfield__input" type="hidden" value="<?php echo $row->ID; ?>" name="rowID" id="rowID">
+                                <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    <?php echo translate("EXTERNEAZA", "RELEASE"); ?>
+                                </button>
+                                <?php echo form_close(); ?>
+                             </td>
+                             <?php } else echo '<td class="mdl-data-table__cell--non-numeric">' . translate("EXTERNAT", "RELEASED") . '</td>'; ?>
+                         </tr>   
+                    <?php
+                        }
+                    ?>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <div class="demo-card-square mdl-card mdl-shadow--2dp mdl-cell--8-col mdl-grid-8" style="margin-top:40px;width:100%">
+            <div class="mdl-card__title mdl-card--expand" style="background:#FF9800">
+                <h2 class="mdl-card__title-text"><?php echo translate("Recomandări - " . getUserData($patient), "Recomandations - " . getUserData($patient)); ?><i class="material-icons" style="opacity: 0.3;font-size: 380%;position: absolute;top: -6px;right: 0;">thumb_up</i></h2>
+            </div>
+            <div style="width: 96%;margin: auto;" class="mdl-card__supporting-text ">
+                <table class="mdl-data-table mdl-js-data-table  mdl-shadow--2dp" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th class="mdl-data-table__cell--non-numeric">Spital</th>
+                      <th class="mdl-data-table__cell--non-numeric">Perioada</th>
+                      <th class="mdl-data-table__cell--non-numeric">Cauza</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php
+                        $query = $this->db->query("SELECT `DoctorCode`, `Date`, `Recomandation` FROM " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.recomandations") . " WHERE `CardCode` = ?", array($patient));
+                      
+                        if(!$query->num_rows()) echo "<td class='mdl-data-table__cell--non-numeric' colspan=3>Recomandari inexistente.</td>";
+                      
+                        foreach($query->result() as $row)
+                        { ?>
+                         <tr>
+                             <td class="mdl-data-table__cell--non-numeric"><?= get_info("Name", $this->config->item("web_table_prefix") . $this->config->item("web_table.users"), "CardCode", $row->DoctorCode); ?></td>
+                             <td class="mdl-data-table__cell--non-numeric"><?= $row->Recomandation; ?></td>
+                             <td class="mdl-data-table__cell--non-numeric"><?= convertTimestampToDate($row->Date); ?></td>
                          </tr>   
                     <?php
                         }

@@ -23,6 +23,14 @@ class Medic_Model extends CI_Model
         $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.diagnostics") . " (`CardCode`, `DoctorCode`, `Diagnostic`, `Hospital`, `Date`) VALUES (?, ?, ?, 1, ?)", array($cardCode, $byDoctor, $contents, time()));
     }
     
+    function insertHospitalization($cardCode, $byDoctor, $contents) {
+        $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.hospitalizations") . " (`CardCode`, `DoctorCode`, `Reason`, `Hospital`, `StartDate`, `StopDate`) VALUES (?, ?, ?, 1, ?, ?)", array($cardCode, $byDoctor, $contents, time(), time()));
+    }
+    
+    function stopHospitalization($cardCode, $id) {
+        $this->db->query("UPDATE " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.hospitalizations") . " SET `StopDate` = ? WHERE `ID` = ? LIMIT 1", array(time(), $id));
+    }
+    
     function insertArticle($titleRO, $titleEN, $contentsRO, $contentsEN, $fileName) {
         $this->db->query("INSERT INTO " . $this->config->item("web_table_prefix") . "" . $this->config->item("web_table.healthguide") . " (`TitleRO`, `TitleEN`, `Content`, `ContentEN`, `Date`, `Photo`) VALUES (?, ?, ?, ?, ?, ?)", array($titleRO, $titleEN, $contentsRO, $contentsEN, time(), $fileName));
     }

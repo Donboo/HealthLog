@@ -36,7 +36,7 @@ class CI_Minifier
      *  2: simplehtmldom
      */
 
-    public static $dom_parser = 1;
+    public static $dom_parser = 5;
 
     /**
      * Set a level type to handle the output.
@@ -187,6 +187,9 @@ class CI_Minifier
         if (!(!self::$enable_html and !self::$enable_css and !self::$enable_js)) {
             if (self::$enable_js or self::$enable_css) {
 
+                if($buffer == NULL) {
+                    self::$dom_parser = 5;
+                }
                 if (self::$dom_parser == 1) {
                     // You're facing "Fatal error: Class 'DOMDocument' not found" error
                     // you need to install php-xml to support PHP DOM

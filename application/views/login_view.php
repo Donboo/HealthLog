@@ -2,7 +2,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.7/dialog-polyfill.min.js"></script>
 
     <?php if(!in_array($this->uri->segment(2), array(null, "2"))) redirect(base_url()); ?>
-    <?php if($this->uri->segment(2) === null && $this->session->userdata('loginSession')["step"] == null) { ?>
+    <?php 
+        if($this->session->userdata('loginSession')["step"] == 2 && !strcmp($this->uri->segment(2), null)) redirect(base_url("Login/2"));
+        if($this->uri->segment(2) === null && $this->session->userdata('loginSession')["step"] == null) {                                                                                                     
+    ?>
+    <script src="<?php echo base_url("assets/js/jquery-3.2.1.min.js"); ?>"></script>
     <div class="mdl-grid f028HL">
         <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell--8-col mdl-grid-8">
             <div class="mdl-card__title">
@@ -45,7 +49,7 @@
             </button>
         </div>
     </dialog>
-    <script defer>
+    <script>
         var dialog = document.querySelector('#dielog');
         var showDialogButton = document.querySelector('#loginHelp');
         if (! dialog.showModal) {
@@ -58,7 +62,7 @@
           dialog.close();
         });
         
-        $(document).ready(function(){
+        $(document).ready(function() {
             $('#stepCodeko').on('submit', function(e) {
                 e.preventDefault();       
                 var code = $('#stepCode').val();
@@ -70,8 +74,9 @@
                     type: "POST",
                     url: "<?php echo base_url()?>Login/stepCode/",
                     dataType: "json",
-                    data: data,                  
+                    data: data,     
                     success: function(data){
+                        console.log(data.valid);
                         if(data.valid){
                             window.location = "<?php echo base_url("login/2"); ?>";
                         }else{
@@ -84,7 +89,13 @@
         });
     </script>
     <?php } ?>
-    <?php if(!strcmp($this->uri->segment(2), "2") && $this->session->userdata('loginSession')["step"] == "2") { ?>
+
+
+    <?php 
+        if($this->session->userdata('loginSession')["step"] == null && !strcmp($this->uri->segment(2), "2")) redirect(base_url("Login"));
+        if(!strcmp($this->uri->segment(2), "2") && $this->session->userdata('loginSession')["step"] == "2") { 
+    ?>
+    <script src="<?php echo base_url("assets/js/jquery-3.2.1.min.js"); ?>"></script>
     <div class="mdl-grid f028HL">
         <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell--8-col mdl-grid-8">
             <div class="mdl-card__title">
@@ -126,7 +137,7 @@
             </button>
         </div>
     </dialog>
-    <script defer>
+    <script>
         var dialog = document.querySelector('#dielog');
         var showDialogButton = document.querySelector('#loginHelp');
         if (! dialog.showModal) {
@@ -139,26 +150,28 @@
           dialog.close();
         });
         
-        $('#stepCodevo').on('submit', function(e) {
-            e.preventDefault();       
-            var password = $('#stepPassword').val();
-            var data = {
-                'passwordeanu' : password,   
-                '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
-            };
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url()?>Login/stepPassword/",
-                dataType: "json",
-                data: data,                  
-                success: function(data){
-                    if(data.valid){
-                        window.location = "<?php echo base_url(); ?>";
-                    }else{
-                        $(".mdl-textfield__error").css("visibility", "visible");
-                        $(".mdl-textfield__error").html(data.errorMessage);
+        $(document).ready(function() {
+            $('#stepCodevo').on('submit', function(e) {
+                e.preventDefault();       
+                var password = $('#stepPassword').val();
+                var data = {
+                    'passwordeanu' : password,   
+                    '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url()?>Login/stepPassword/",
+                    dataType: "json",
+                    data: data,            
+                    success: function(data){
+                        if(data.valid){
+                            window.location = "<?php echo base_url(); ?>";
+                        }else{
+                            $(".mdl-textfield__error").css("visibility", "visible");
+                            $(".mdl-textfield__error").html(data.errorMessage);
+                        }
                     }
-                }
+                });
             });
         });
     </script>

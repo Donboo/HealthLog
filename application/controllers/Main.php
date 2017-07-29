@@ -9,6 +9,14 @@ class Main extends CI_Controller {
         if($this->session->userdata('loggedInfo')["CardCode"] == null) redirect(base_url("login"));
         $session_data = $this->session->userdata('loggedInfo');
         $data['username'] = $session_data['Name'];
+        
+        switch (ENVIRONMENT)
+        {
+            case 'development': 
+                $this->output->enable_profiler(TRUE);
+            break;
+        }
+        
         $this->load->view('includes/template.php', ($data));
         if (!is_cache_valid(md5('default'), 300)){
             $this->db->cache_delete('default');
@@ -32,7 +40,7 @@ class Main extends CI_Controller {
                     'Language' => 1
                 );
                 $this->session->set_userdata('userPreferences', $uP);
-                echo json_encode(array("valid" => 1));
+                die(json_encode(array("valid" => 1)));
                 break;
             }
             case 1: {
@@ -41,7 +49,7 @@ class Main extends CI_Controller {
                     'Language' => 1
                 );
                 $this->session->set_userdata('userPreferences', $uP);
-                echo json_encode(array("valid" => 1));
+                die(json_encode(array("valid" => 1)));
                 break;
             }
             case 2: {
@@ -49,7 +57,7 @@ class Main extends CI_Controller {
                     'Language' => 2
                 );
                 $this->session->set_userdata('userPreferences', $uP);
-                echo json_encode(array("valid" => 1));
+                die(json_encode(array("valid" => 1)));
                 break;
             }
         }

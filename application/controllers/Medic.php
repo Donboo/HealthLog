@@ -170,6 +170,9 @@ class Medic extends CI_Controller {
             }
             else
             {
+                $textToSpeech = file_get_contents('http://translate.google.com/translate_tts?q=' . urlencode($titleRO) . '&tl=ro&client=duncan3dc-speaker');
+                file_put_contents('./assets/sounds/' . urlencode($titleRO) . "-" . $row->ID, $textToSpeech);
+                
                 $upload_data = $this->upload->data();
                 $fileName = $upload_data['file_name'];
                 $this->medic_model->insertArticle($titleRO, $titleEN, $contentsRO, $contentsEN, $fileName);
@@ -185,9 +188,9 @@ class Medic extends CI_Controller {
         $code = $this->input->post('codCard');
         if($this->user->codeExists($code)) {   
             $eok = explode(',', $this->medic_model->searchUser($code, "Location"));
-            echo json_encode(array("valid" => 1, "name" => $this->medic_model->searchUser($code, "Name"), "byear" => $this->medic_model->searchUser($code, "BirthYear"), "where" => $eok["1"].", ".$eok["2"]));
+            die(json_encode(array("valid" => 1, "name" => $this->medic_model->searchUser($code, "Name"), "byear" => $this->medic_model->searchUser($code, "BirthYear"), "where" => $eok["1"].", ".$eok["2"])));
         }      
-        else echo json_encode(array("valid" => 0));
+        else die(json_encode(array("valid" => 0)));
     }
     
 }

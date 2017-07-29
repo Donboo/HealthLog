@@ -51,10 +51,10 @@ class Analize extends CI_Controller {
 
             if(!($this->analize_model->checkActive(session('loggedInfo', 'CardCode')))) {
                 if($this->analize_model->insertAnalize(session('loggedInfo', 'CardCode'), $date))
-                    echo json_encode(array("valid" => 1));
-                else echo json_encode(array("valid" => 2));
+                    die(json_encode(array("valid" => 1)));
+                else die(json_encode(array("valid" => 2)));
             }
-            else echo json_encode(array("valid" => 0));
+            else die(json_encode(array("valid" => 0)));
         }
     }
 

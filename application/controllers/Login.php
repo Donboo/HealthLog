@@ -5,6 +5,10 @@ class Login extends CI_Controller {
     function __construct()
     {
         parent::__construct();
+        if (!is_cache_valid(md5('login'), 1800)){
+            $this->db->cache_delete('login');
+            $this->db->cache_delete(md5('login'));
+        }
         $this->load->model('user','',TRUE);
     }
 
@@ -13,24 +17,26 @@ class Login extends CI_Controller {
         $this->load->library('form_validation');
 
         $contentForbidden = file_get_contents('./application/logs/IPs.txt', FILE_USE_INCLUDE_PATH);
-        $IPs = explode('|', $contentForbidden);
-        foreach($IPs as $IP)
-        {
-            $lol = explode('-', $IP);
-            if(!strcmp($lol[0], $this->input->ip_address()))
+        if(strlen($contentForbidden) > 1) {
+            $IPs = explode('|', $contentForbidden);
+            foreach($IPs as $IP)
             {
-                if(time() - strval($lol[1]) < 1)
-                    die("Accesul ti-a fost interzis pentru 15 minute.");
-                else {
-                    $content = str_replace($contentForbidden, "", $IP);
-                    file_put_contents('./application/logs/IPs.txt', $content);
-                    unset($_SESSION["breakTries"]);
+                $lol = explode('-', $IP);
+                if(!strcmp($lol[0], $this->input->ip_address()))
+                {
+                    if(time() - strval($lol[1]) < 1)
+                        die("<h1>Accesul ti-a fost interzis pentru 15 minute.</h1>");
+                    else {
+                        $content = str_replace($contentForbidden, "", $IP);
+                        file_put_contents('./application/logs/IPs.txt', $content);
+                        unset($_SESSION["breakTries"]);
+                    }
                 }
             }
         }
         
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('stepCode', 'Username', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('stepPassword', 'Password', 'trim|required|xss_clean');
 
         if($this->form_validation->run() == FALSE)
         {
@@ -65,8 +71,8 @@ class Login extends CI_Controller {
                 'step' => 2
             );
             $this->session->set_userdata('loginSession', $loginSession);
-            
-            echo json_encode(array("valid" => 1));
+
+            die(json_encode(array("valid" => 1)));
         }
         else {
             if(!isset($_SESSION["breakTries"])) $_SESSION["breakTries"] = 1;
@@ -74,17 +80,18 @@ class Login extends CI_Controller {
             {
                 $_SESSION["breakTries"] += 1;
                 if($_SESSION["breakTries"] == 5) {
-                    echo json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Accesul la autentificare ti-a fost restrictionat pentru 15 minute."));
                     $file = './application/logs/IPs.txt';
                     $handle = fopen($file, 'a') or exit;
                     $content = $this->input->ip_address() . "-" . time() . "|";
                     fwrite($handle, $content);
+                    
+                    die(json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Accesul la autentificare ti-a fost restrictionat pentru 15 minute.")));
                 }
                 elseif($_SESSION["breakTries"] >= 5) {
-                    echo json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Accesul la autentificare ti-a fost restrictionat."));
+                    die(json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Accesul la autentificare ti-a fost restrictionat.")));
                 }
                 else
-                    echo json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Mai ai " . (5 - intval($_SESSION["breakTries"])) . " incercari de autentificare pana iti vom bloca temporar accesul la site."));
+                    die(json_encode(array("valid" => 0, "errorMessage" => "Codul de card nu exista. Mai ai " . (5 - intval($_SESSION["breakTries"])) . " incercari de autentificare pana iti vom bloca temporar accesul la site.")));
             }
          }
      }
@@ -94,14 +101,16 @@ class Login extends CI_Controller {
         $exists = $this->user->userExists($this->session->userdata('loginSession')["CardCode"], $password);
         if($exists){
             unset($_SESSION["loginTries"]);
-            echo json_encode(array("valid" => 1));
+            $this->session->unset_userdata('loginSession');
+            die(json_encode(array("valid" => 1)));
         }
         else {
             if(!isset($_SESSION["loginTries"])) $_SESSION["loginTries"] = 1;
             elseif(isset($_SESSION["loginTries"])) 
             {
                 $_SESSION["loginTries"] += 1;
-                if($_SESSION["loginTries"] < 3) echo json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Mai ai " . (3 - intval($_SESSION["loginTries"])) . " incercari de autentificare pana iti vom bloca temporar accesul la cont."));
+                if($_SESSION["loginTries"] < 3) die(json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Mai ai " . (3 - intval($_SESSION["loginTries"])) . " incercari de autentificare pana iti vom bloca temporar accesul la cont.")));
+                
                 elseif($_SESSION["loginTries"] == 3) {
                     
                     $getloc = json_decode(file_get_contents("http://ipinfo.io/"));
@@ -137,11 +146,11 @@ class Login extends CI_Controller {
 
                     $this->email->send();
                     
-                    echo json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Accesul la cont a fost restrictionat."));
                     unset($_SESSION["loginTries"]);
+                    die(json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Accesul la cont a fost restrictionat.")));
                 }
                 else
-                    echo json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Accesul la cont a fost restrictionat."));
+                    die(json_encode(array("valid" => 0, "errorMessage" => "Parola nu corespunde codului de card. Accesul la cont a fost restrictionat.")));
             }
          }
      }
